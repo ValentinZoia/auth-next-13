@@ -4,6 +4,7 @@ export const messages ={
         userLogged: "User logged successfully",
         emailSent: "Email sent successfully",
         passwordChanged: "Password changed successfully",
+        userVerified: "User verified successfully",
         
     }
     ,

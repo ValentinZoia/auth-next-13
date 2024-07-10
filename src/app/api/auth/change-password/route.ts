@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
       // @ts-ignore
       const { data } = isTokenValid;
 
-      // 6- buscar el usuario en la base de datos por id
+      // 6- buscar el usuario en la base de datos por id. id guardado en el token
       const userFind = await User.findById(data.id);
 
       //7- validar que el usuario exista
@@ -94,10 +94,10 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      //6-encriptar la contrasenia
+      //8-encriptar la contrasenia
       const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-      //7- actualizar la contrasenia del usuario
+      //9- actualizar la contrasenia del usuario
       const userUpdate = await User.findByIdAndUpdate(data.id, {
         password: hashedPassword,
       });
@@ -109,10 +109,10 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      //8- guardar el usuario en la base de datos
+      //10- guardar el usuario en la base de datos
       await userUpdate.save();
 
-      //9- devolver una respuesta exitosa
+      //11- devolver una respuesta exitosa
       return NextResponse.json(
         { message: messages.success.passwordChanged },
         { status: 200 }
