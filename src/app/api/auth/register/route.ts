@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
     await newUser.save();
 
     //6- crear el token
-    const token = jwt.sign({ data: rest }, "secreto", {
+    const token = jwt.sign({ data: rest }, process.env.JWT_SECRET as string, {
       expiresIn: "1d",
     });
 

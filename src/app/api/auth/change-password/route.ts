@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
 
     try {
       //5- verificar que el token sea valido
-      const isTokenValid = jwt.verify(token, "secreto");
+      const isTokenValid = jwt.verify(token, process.env.JWT_SECRET as string);
 
       // @ts-ignore
       const { data } = isTokenValid;

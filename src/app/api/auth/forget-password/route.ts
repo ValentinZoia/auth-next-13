@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
     // y expirara en un dia
     const token = jwt.sign(
       { data: tokenData },
-      "secreto",
+      process.env.JWT_SECRET as string,
       {
         expiresIn: "1d",
       }
