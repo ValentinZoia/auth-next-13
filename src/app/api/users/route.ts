@@ -6,7 +6,9 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(request: NextRequest){
     try {
         await connectDB();
+        // obtiene todos los usuarios
         const users = await User.find();
+        //envia la response con todos los usuarios
         return NextResponse.json({users}, {status: 200});
 
 
