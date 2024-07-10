@@ -19,5 +19,6 @@ export const messages ={
         invalidPassword: "Invalid password",
         invalidToken: "Invalid token",
         userNotVerified: "User not verified",
+        newPasswordSameAsOldPassword: "New password can't be the same as old password",
     }
 }

@@ -45,6 +45,13 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+    //validar que las contrasenias coincidan
+    if (newPassword !== confirmPassword) {
+      return NextResponse.json(
+        { error: messages.error.passwordsDontMatch },
+        { status: 400 }
+      );
+    }
 
     // 3- Obtener el token de la cabecera de la solicitud HTTP
     // headers() devuelve un objeto con todas las cabeceras de la solicitud
@@ -79,10 +86,10 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      //validar que las contrasenias coincidan
-      if (newPassword !== confirmPassword) {
+      //validar que la nueva contrasenia no sea igual a la vieja
+      if (await bcrypt.compare(newPassword, userFind?.password)) {
         return NextResponse.json(
-          { error: messages.error.passwordsDontMatch },
+          { error: messages.error.newPasswordSameAsOldPassword },
           { status: 400 }
         );
       }
@@ -111,7 +118,10 @@ export async function POST(request: NextRequest) {
         { status: 200 }
       );
     } catch (error) {
-      return NextResponse.json({ error: token }, { status: 500 });
+      return NextResponse.json(
+        { error: messages.error.invalidToken },
+        { status: 500 }
+      );
     }
   } catch (error) {
     return NextResponse.json(
