@@ -5,6 +5,7 @@ export const messages ={
         emailSent: "Email sent successfully",
         passwordChanged: "Password changed successfully",
         userVerified: "User verified successfully",
+        accountConfirmed: "Account confirmed successfully",
         
     }
     ,
@@ -20,6 +21,8 @@ export const messages ={
         invalidPassword: "Invalid password",
         invalidToken: "Invalid token",
         userNotVerified: "User not verified",
+        notConfirmedAccount: "Account not confirmed",
         newPasswordSameAsOldPassword: "New password can't be the same as old password",
+        notSendEmail: "A error ocurred while sending email",
     }
 }

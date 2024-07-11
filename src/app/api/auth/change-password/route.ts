@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
     //3 - verificar que haya token
     if (!token) {
       return NextResponse.json(
-        { error: messages.error.userNotVerified },
+        { error: messages.error.userNotVerified},
         { status: 400 }
       );
     }
@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
       const { data } = isTokenValid;
 
       // 5- buscar el usuario en la base de datos por id. id guardado en el token
-      const userFind = await User.findById(data.id);
+      const userFind = await User.findById(data._id);
 
       //6- validar que el usuario exista
       if (!userFind) {
@@ -98,7 +98,7 @@ export async function POST(request: NextRequest) {
       const hashedPassword = await bcrypt.hash(newPassword, 10);
 
       //9- actualizar la contrasenia del usuario
-      const userUpdate = await User.findByIdAndUpdate(data.id, {
+      const userUpdate = await User.findByIdAndUpdate(data._id, {
         password: hashedPassword,
       });
 

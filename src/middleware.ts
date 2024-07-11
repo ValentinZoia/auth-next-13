@@ -3,11 +3,13 @@ import { NextResponse } from 'next/server'
 
 export async function middleware (request: NextRequest) {
   try {
+    //token guardado despues de hacer login
     const token = request.cookies.get('auth_cookie')
 
-    //si no tengo token no puedo acceder a /home
+    //si no tengo token no puedo acceder a /home  
+    //por lo tanto redirecciono a /login
     if (!token) {
-      return NextResponse.redirect(new URL('/', request.url))
+      return NextResponse.redirect(new URL('/login', request.url))
     }
 
     const res = await fetch('http://localhost:3000/api/auth/check', {
@@ -20,13 +22,13 @@ export async function middleware (request: NextRequest) {
     
     // @ts-ignore
     if (!data.isAuthorized) {
-      
-      return NextResponse.redirect(new URL('/', request.url))
+      //si no estyo autenticado osea el token es invalido, redirecciono a /login
+      return NextResponse.redirect(new URL('/login', request.url))
     }
 
     return NextResponse.next()
   } catch (error) {
-    return NextResponse.redirect(new URL('/', request.url))
+    return NextResponse.redirect(new URL('/login', request.url))
   }
 }
 

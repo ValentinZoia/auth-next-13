@@ -9,11 +9,11 @@ export default function ChangePasswordPage() {
   const searchParams = useSearchParams();
 
   const changePassword = async (formData: any) => {
-    const token = searchParams.get('token')
+    const token = searchParams.get('access_token')
     console.log(formData)
     await authRouter({
       endpoint: "change-password",
-      redirectRoute: "/",
+      redirectRoute: "/login",
       body: formData,
       token: `${token}`
     });

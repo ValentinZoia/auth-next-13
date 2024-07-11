@@ -44,6 +44,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    //validar que el usuario este confirmado
+    if (!userFind.isConfirmed) {
+      return NextResponse.json(
+        { error: messages.error.notConfirmedAccount },
+        { status: 400 }
+      );
+    }
+
     //validar que las contrasenia sea la correcta
     const isCorrect: boolean = await bcrypt.compare(
       password,
@@ -67,6 +75,9 @@ export async function POST(request: NextRequest) {
     const token = jwt.sign({ data: rest }, process.env.JWT_SECRET as string, {
       expiresIn: "1d",
     });
+
+    
+
 
     //5- devolvemos la respuesta
     const response = NextResponse.json(

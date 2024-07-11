@@ -37,18 +37,26 @@ export const useAuthFetch = () => {
         const errorData = await response.json();
         throw new Error(errorData.error || "Network response was not ok");
       }
+
+      //si todo esta bien obtengo la data de la respuesta
       const data = await response.json();
 
-      //Mostrar una notificacion
+      //Mostrar una notificacion de exito
       showNotification({
         msj: data.message,
         open: true,
         status: "success",
       });
 
+      // Redirecciono al usuario
       if (redirectRoute) {
         router.push(redirectRoute);
       }
+
+      // Devolver un valor de éxito
+      return { success: true };
+
+
     } catch (error: any) {
       let errorMessage = "An unknown error occurred";
 
@@ -62,6 +70,9 @@ export const useAuthFetch = () => {
         open: true,
         status: "error",
       });
+
+      // Devolver un valor de fracaso
+      return { success: false };
     }
   };
 

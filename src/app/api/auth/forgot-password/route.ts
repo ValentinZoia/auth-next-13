@@ -5,6 +5,7 @@ import { Resend } from "resend";
 import jwt from "jsonwebtoken";
 import { messages } from "@/utils/messages";
 import { isValidEmail } from "@/utils/isValidEmail";
+import { EmailTemplate } from "@/components/EmailTemplate/email-template";
 
 
 interface BodyProps {
@@ -46,10 +47,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: messages.error.userNotFound }, { status: 404 });
     }
 
+    //validar que el usuario este verificado
+    if (!userFind.isConfirmed) {
+      return NextResponse.json({ error: messages.error.notConfirmedAccount }, { status: 400 });
+    }
+
     // 3- creamos un objeto con el email y el id del usuario encontrado
     const tokenData = {
       email: userFind.email,
-      id: userFind._id,
+      _id: userFind._id,
     };
 
     // 3- generamos un token con el objeto de datos del usuario
@@ -64,23 +70,32 @@ export async function POST(request: NextRequest) {
     );
 
     // 4- generamos la URL de cambio de contraseña concatenando la URL de la app
-    // con el token generado previamente
-    const forgetUrl = `http://localhost:3000/change-password?token=${token}`;
-
+    // con el token generado previamente y los datos del componente
+    const forgetUrl: string = `http://localhost:3000/change-password?access_token=${token}`;
+    const title = "Reset your password";
+    const description = "Follow the button to reset the password for your user.";
+    const descriptionLink="Reset password";
 
     // 5- enviamos el email al usuario con la URL de cambio de contraseña
-    await resend
-      .emails
-      .send({
+    const {data, error}= await resend.emails.send({
         from: "onboarding@resend.dev",
-        to: email,
-        subject: "Cambio de contraseña",
+        to: [email],
+        subject: "Change your password",
+        react: EmailTemplate({ buttonUrl: forgetUrl, title, description, descriptionLink }),
         html: `
         <h1>Hola ${userFind.email},</h1>
         <p>Para cambiar tu contraseña, haz click en el siguiente enlace:</p>                
         <a href="${forgetUrl}">Cambia tu contraseña</a>
         `,
       });
+
+      if (error) {
+        return NextResponse.json(
+          { error: messages.error.generic },
+          { status: 500 }
+        );
+      }
+
 
       //6- Devolvemos respusta exitosa
     return NextResponse.json({ message: messages.success.emailSent}, { status: 200 });
