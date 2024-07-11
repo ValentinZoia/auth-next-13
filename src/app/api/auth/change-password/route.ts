@@ -8,7 +8,7 @@ import bcrypt from "bcryptjs";
 
 interface BodyProps {
   newPassword: string;
-  confirmPassword: string;
+  confirmNewPassword: string;
 }
 
 export async function POST(request: NextRequest) {
@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
     const body: BodyProps = await request.json();
 
     //1- destructuramos el body
-    const { newPassword, confirmPassword } = body;
+    const { newPassword, confirmNewPassword } = body;
 
     // 2- Obtener el token de la cabecera de la solicitud HTTP
     // headers() devuelve un objeto con todas las cabeceras de la solicitud
@@ -56,9 +56,9 @@ export async function POST(request: NextRequest) {
 
       //7-------------- VALIDACIONES -------------
       //validamos que los campos no esten vacios
-      if (!newPassword || !confirmPassword) {
+      if (!newPassword || !confirmNewPassword) {
         return NextResponse.json(
-          { error: messages.error.needProps },
+          { error: confirmNewPassword },
           { status: 400 }
         );
       }
@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
         );
       }
       //validar que las contrasenias coincidan
-      if (newPassword !== confirmPassword) {
+      if (newPassword !== confirmNewPassword) {
         return NextResponse.json(
           { error: messages.error.passwordsDontMatch },
           { status: 400 }

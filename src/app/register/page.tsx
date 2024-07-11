@@ -3,25 +3,27 @@
 import { Form } from "@/components/Form";
 import { useAuthFetch } from "@/hooks/useAuthFetch";
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const { authRouter } = useAuthFetch();
 
-  const login = async (formData: any) => {
+  const register = async (formData:any) =>{
     await authRouter({
-      endpoint: "/login",
-      redirectRoute: "/home",
+      endpoint: "register",
+      redirectRoute: "/",
       body: formData,
     });
-  };
+  }
+  
+  
   
   return (
     <>
       <Form
-        onSubmit={login}
-        title="Login"
-        description="Don't have an account?"
-        descriptionLink=" Sign up."
-        href="/register"
+        onSubmit={register}
+        title="Create Account"
+        description="Already have an account?"
+        descriptionLink=" Log in."
+        href="/"
       >
         <Form.Input
           type="email"
@@ -35,6 +37,13 @@ export default function LoginPage() {
           placeholder="Password"
           required
         ></Form.Input>
+        <Form.Input
+          type="password"
+          name="confirmPassword"
+          placeholder="Confirm password"
+          required
+        ></Form.Input>
+
         <div className="flex items-center justify-between flex-wrap">
           <label
             className="text-sm text-gray-200 cursor-pointer"
@@ -43,15 +52,10 @@ export default function LoginPage() {
             <input className="mr-2" id="remember-me" type="checkbox" />
             Remember me
           </label>
-          <a
-            className="text-sm text-blue-500 hover:underline mb-0.5"
-            href="/forgot-password"
-          >
-            Forgot password?
-          </a>
         </div>
-        <Form.SubmitButton text="Continue"></Form.SubmitButton>
+        <Form.SubmitButton text="Create Account"></Form.SubmitButton>
       </Form>
     </>
+
   );
 }

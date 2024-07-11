@@ -23,7 +23,7 @@ export async function GET(request: Request) {
       const { data } = isTokenValid;
 
       //buscar el usuario en la base de datos por id. id guardado en el token
-      const userFind = await User.findById(data.id);
+      const userFind = await User.findById(data._id);
 
       //validar que el usuario exista
       if (!userFind) {
