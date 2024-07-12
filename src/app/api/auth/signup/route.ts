@@ -5,8 +5,11 @@ import { messages } from "@/utils/messages";
 import { connectDB } from "@/libs/mongodb";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
+import { Resend } from "resend";
+import { EmailTemplate } from "@/components/EmailTemplate/email-template";
 
-// API route for user registration
+const resend = new Resend(process.env.RESEND_API_KEY as string);
+
 //el nombre de la funcion debe ser como el metodo de las peticiones
 export async function POST(request: NextRequest) {
   try {
@@ -14,10 +17,10 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
 
-    //1- desestructuramos el body
+    // desestructuramos el body
     const { email, password, confirmPassword } = body;
 
-    //2 -------------- VALIDACIONES -------------
+    //-------------- VALIDACIONES -------------
     //validamos que los campos no esten vacios
     if (!email || !password || !confirmPassword) {
       return NextResponse.json(
@@ -68,47 +71,66 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    //3- hash de la contrasenia
+    // hash de la contrasenia
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    //4- creamos el usuario
-    const newUser: IUserSchema = new User({
-      email,
-      password: hashedPassword,
+    //Creamos token de confirmacion de cuenta. Expira en 30 minutos
+    const confirmationToken = jwt.sign(
+      { data: { 
+        email, 
+        password: hashedPassword, 
+        isConfirmed: false,
+        
+        }
+      },
+      process.env.JWT_SECRET as string,
+      {
+        expiresIn: "30m",
+      }
+    );
+
+    //enviamos el email de confirmacion de cuenta a su email
+    const confirmUrl: string = `http://localhost:3000/confirm-account?token=${confirmationToken}`;
+    const title = "Confirm your account";
+    const description =
+      "Thank you for signing up! To confirm your account, please follow the button below.";
+    const descriptionLink = "Confirm account";
+
+    const { data, error } = await resend.emails.send({
+      from: "onboarding@resend.dev",
+      to: [email],
+      subject: "Confirm your account",
+      react: EmailTemplate({
+        buttonUrl: confirmUrl,
+        title,
+        description,
+        descriptionLink,
+      }),
+      html: `
+      <h2>Confirm your account</h2>
+      <p>Introduce este código o haz clic en el botón a continuación para confirmar tu email.</p>
+      <h1>NUMERO</h1>                
+      <a href="${confirmUrl}">Cambia tu contraseña</a>
+      `,
     });
 
-    //@ts-ignore
-    const { password: userPass, ...rest } = newUser._doc;
+    //si hay un error en el envio del email
+    if (error) {
+      return NextResponse.json({ error: error }, { status: 500 });
+    }
 
-    //5- guardamos el usuario
-    await newUser.save();
-
-    //6- crear el token
-    const token = jwt.sign({ data: rest }, process.env.JWT_SECRET as string, {
-      expiresIn: "1d",
-    });
-
-    //7- devolvemos la respuesta
+    //Si todo esta bien devolvemos la respuesta
     const response = NextResponse.json(
       {
-        newUser: rest,
-        message: messages.success.userRegistered,
+        isAuthorized: false,
+        message: messages.success.emailSent,
       },
       {
         status: 200,
       }
     );
 
-    //8- seteamos el cookie
-    response.cookies.set("authToken", token, {
-      httpOnly: true,
-      maxAge: 60 * 60 * 24,
-      sameSite: "strict",
-      secure: process.env.NODE_ENV === "production",
-    });
-
     return response;
-    
   } catch (error) {
     return NextResponse.json(
       { error: messages.error.generic },

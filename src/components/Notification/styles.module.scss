@@ -4,6 +4,8 @@
     right: 0;
     margin-bottom: 1rem;
     z-index: 5;
+    background-color: white;
+    
   
     display: flex;
     align-items: center;
@@ -21,10 +23,12 @@
   
     &.success {
       outline: 1.5px solid greenyellow;
+      color:rgb(7, 82, 7) ;
     }
   
     &.error {
       outline: 1.5px solid orangered;
+      color: orangered;
     }
   }
   

@@ -26,25 +26,25 @@ export async function POST(request: NextRequest) {
     // get() busca una cabecera y devuelve su valor
     // En este caso, estamos buscando la cabecera 'token'
     const headersList = headers();
-    const token = headersList.get("token");
+    const resetPasswordToken = headersList.get("token");
 
     //3 - verificar que haya token
-    if (!token) {
+    if (!resetPasswordToken) {
       return NextResponse.json(
-        { error: messages.error.userNotVerified },
+        { error: messages.error.userNotVerified},
         { status: 400 }
       );
     }
 
     try {
       //4- verificar que el token sea valido
-      const isTokenValid = jwt.verify(token, process.env.JWT_SECRET as string);
+      const isTokenValid = jwt.verify(resetPasswordToken, process.env.JWT_SECRET as string);
 
       // @ts-ignore
       const { data } = isTokenValid;
 
       // 5- buscar el usuario en la base de datos por id. id guardado en el token
-      const userFind = await User.findById(data.id);
+      const userFind = await User.findById(data._id);
 
       //6- validar que el usuario exista
       if (!userFind) {
@@ -98,7 +98,7 @@ export async function POST(request: NextRequest) {
       const hashedPassword = await bcrypt.hash(newPassword, 10);
 
       //9- actualizar la contrasenia del usuario
-      const userUpdate = await User.findByIdAndUpdate(data.id, {
+      const userUpdate = await User.findByIdAndUpdate(data._id, {
         password: hashedPassword,
       });
 
