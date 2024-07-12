@@ -74,13 +74,16 @@ export async function POST(request: NextRequest) {
     // hash de la contrasenia
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    //creo un codigo OTP de 6 digitos
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
     //Creamos token de confirmacion de cuenta. Expira en 30 minutos
     const confirmationToken = jwt.sign(
       { data: { 
         email, 
         password: hashedPassword, 
         isConfirmed: false,
-        
+        otp: otp,        
         }
       },
       process.env.JWT_SECRET as string,
@@ -105,11 +108,12 @@ export async function POST(request: NextRequest) {
         title,
         description,
         descriptionLink,
+        otpCode: otp,
       }),
       html: `
       <h2>Confirm your account</h2>
       <p>Introduce este código o haz clic en el botón a continuación para confirmar tu email.</p>
-      <h1>NUMERO</h1>                
+      <h1>${otp}</h1>                
       <a href="${confirmUrl}">Cambia tu contraseña</a>
       `,
     });

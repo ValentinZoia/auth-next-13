@@ -40,13 +40,13 @@ export async function GET(request: Request) {
       );
     } catch (error) {
       return NextResponse.json(
-        { error: messages.error.invalidToken },
+        { isAuthorized: false, error: messages.error.invalidToken },
         { status: 500 }
       );
     }
   } catch (error) {
     return NextResponse.json(
-      { error: messages.error.generic },
+      { isAuthorized: false, error: messages.error.generic },
       { status: 500 }
     );
   }

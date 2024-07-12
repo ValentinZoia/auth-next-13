@@ -5,10 +5,23 @@ import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 import { messages } from "@/utils/messages";
 
+interface BodyProps {
+  otpCode: string
+}
+
+
 export async function POST(request: NextRequest) {
   try {
     await connectDB();
 
+    //obtenemos el body del front
+    const body: BodyProps = await request.json();
+
+    //1- destructuramos el body con el codigo otp que manda el usuario
+    const { otpCode} = body;
+
+
+    //2- Obtener el token de la cabecera de la solicitud HTTP
     const headersList = headers();
     const confirmationToken = headersList.get("token");
     //si no existe token no puedo confirmar la cuenta
@@ -19,27 +32,36 @@ export async function POST(request: NextRequest) {
       );
     }
 
+
     try {
-      //obtengo la info del token (email, password)
+      //obtengo la info del token (email, password, isConfirmed, otp)
       const { data: confirmationTokenData } = jwt.verify(
         confirmationToken,
         process.env.JWT_SECRET as string
       ) as any;
 
       //si falta alguna info no puedo confirmar la cuenta
-      if (!confirmationTokenData || !confirmationTokenData.email || !confirmationTokenData.password) {
+      if (!confirmationTokenData || !confirmationTokenData.email || !confirmationTokenData.password || !confirmationTokenData.otp) {
         return NextResponse.json(
           { error: messages.error.invalidToken },
           { status: 400 }
         );
       }
       //desestructuro la info
-      const { email, password, isConfirmed } = confirmationTokenData;
+      const { email, password, isConfirmed, otp } = confirmationTokenData;
 
       //validamos que el usuario no este confirmado
       if (isConfirmed) {
         return NextResponse.json(
           { error: messages.error.userAlreadyVerified },
+          { status: 400 }
+        );
+      }
+
+      //validamos que el otp sea el correcto
+      if (otp !== otpCode) {
+        return NextResponse.json(
+          { error: messages.error.invalidOtp },
           { status: 400 }
         );
       }

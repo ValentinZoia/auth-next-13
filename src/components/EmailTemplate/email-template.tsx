@@ -3,6 +3,7 @@ interface EmailTemplateProps {
   title: string;
   description: string;
   descriptionLink?: string;
+  otpCode?: string;
 }
 
 export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = ({
@@ -10,6 +11,7 @@ export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = ({
   title,
   description,
   descriptionLink,
+  otpCode,
 }) => (
   <div
     style={{
@@ -46,6 +48,21 @@ export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = ({
     >
       {description}
     </div>
+      {otpCode && (
+        <div
+          style={{
+            fontSize: "14px",
+            lineHeight: "24px",
+            marginBottom: "10px",
+            fontFamily:
+              "-apple-system,BlinkMacSystemFont,'Segoe UI','Roboto','Oxygen','Ubuntu','Cantarell','Fira Sans','Droid Sans','Helvetica Neue',sans-serif",
+            color: "#aaaaaa",
+          }}
+        >
+          {otpCode}
+        </div>
+      )}
+
     <div
       style={{
         fontSize: "14px",

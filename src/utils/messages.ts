@@ -25,5 +25,6 @@ export const messages ={
         newPasswordSameAsOldPassword: "New password can't be the same as old password",
         notSendEmail: "A error ocurred while sending email",
         userAlreadyVerified: "User already verified",
+        invalidOtp: "Invalid Code OTP"
     }
 }
