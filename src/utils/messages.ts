@@ -24,5 +24,6 @@ export const messages ={
         notConfirmedAccount: "Account not confirmed",
         newPasswordSameAsOldPassword: "New password can't be the same as old password",
         notSendEmail: "A error ocurred while sending email",
+        userAlreadyVerified: "User already verified",
     }
 }

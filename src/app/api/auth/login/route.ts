@@ -71,8 +71,10 @@ export async function POST(request: NextRequest) {
     // La sintaxis {password: userPass, ...rest} indica que queremos mantener la propiedad password como una variable separada, y que queremos asignar todas las demás propiedades al objeto rest.
     const { password: userPass, ...rest } = userFind._doc;
 
-    //4- crear el token
-    const token = jwt.sign({ data: rest }, process.env.JWT_SECRET as string, {
+    /*4- crear el token con el cual el usuario inicia sesion y se mantiene logeado en un futuro
+        crearemos un refreshToken para que el usuario pueda renovar su sesion
+    */
+    const sessionToken = jwt.sign({ data: rest }, process.env.JWT_SECRET as string, {
       expiresIn: "1d",
     });
 
@@ -82,7 +84,6 @@ export async function POST(request: NextRequest) {
     //5- devolvemos la respuesta
     const response = NextResponse.json(
       {
-        userLogged: rest,
         message: messages.success.userLogged,
       },
       {
@@ -91,7 +92,7 @@ export async function POST(request: NextRequest) {
     );
 
      //6- seteamos el cookie
-     response.cookies.set("auth_cookie", token, {
+     response.cookies.set("auth_cookie", sessionToken, {
         httpOnly: true,
         maxAge: 60 * 60 * 24,
         sameSite: "strict",

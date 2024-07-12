@@ -10,7 +10,6 @@ import { EmailTemplate } from "@/components/EmailTemplate/email-template";
 
 const resend = new Resend(process.env.RESEND_API_KEY as string);
 
-// API route for user registration
 //el nombre de la funcion debe ser como el metodo de las peticiones
 export async function POST(request: NextRequest) {
   try {
@@ -75,16 +74,23 @@ export async function POST(request: NextRequest) {
     // hash de la contrasenia
     const hashedPassword = await bcrypt.hash(password, 10);
 
-
-    
-
-    //crear el token de acceso - en el token viaja el email y la contrasenia
-    const token = jwt.sign({ data: { email, password: hashedPassword }, }, process.env.JWT_SECRET as string, {
-      expiresIn: "1d",
-    });
+    //Creamos token de confirmacion de cuenta. Expira en 30 minutos
+    const confirmationToken = jwt.sign(
+      { data: { 
+        email, 
+        password: hashedPassword, 
+        isConfirmed: false,
+        
+        }
+      },
+      process.env.JWT_SECRET as string,
+      {
+        expiresIn: "30m",
+      }
+    );
 
     //enviamos el email de confirmacion de cuenta a su email
-    const confirmUrl: string = `http://localhost:3000/confirm-account?token=${token}`;
+    const confirmUrl: string = `http://localhost:3000/confirm-account?token=${confirmationToken}`;
     const title = "Confirm your account";
     const description =
       "Thank you for signing up! To confirm your account, please follow the button below.";
@@ -108,14 +114,14 @@ export async function POST(request: NextRequest) {
       `,
     });
 
+    //si hay un error en el envio del email
     if (error) {
       return NextResponse.json({ error: error }, { status: 500 });
     }
 
-    //devolvemos la respuesta
+    //Si todo esta bien devolvemos la respuesta
     const response = NextResponse.json(
       {
-
         isAuthorized: false,
         message: messages.success.emailSent,
       },
@@ -124,7 +130,6 @@ export async function POST(request: NextRequest) {
       }
     );
 
-    
     return response;
   } catch (error) {
     return NextResponse.json(

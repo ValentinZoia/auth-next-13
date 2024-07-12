@@ -10,29 +10,40 @@ export async function POST(request: NextRequest) {
     await connectDB();
 
     const headersList = headers();
-    const token = headersList.get("token");
+    const confirmationToken = headersList.get("token");
     //si no existe token no puedo confirmar la cuenta
-    if (!token) {
-      return NextResponse.json({ error: messages.error.userNotVerified }, { status: 400 });
+    if (!confirmationToken) {
+      return NextResponse.json(
+        { error: messages.error.userNotVerified },
+        { status: 400 }
+      );
     }
 
     try {
       //obtengo la info del token (email, password)
-      const { data: tokenData } = jwt.verify(
-        token,
+      const { data: confirmationTokenData } = jwt.verify(
+        confirmationToken,
         process.env.JWT_SECRET as string
       ) as any;
 
       //si falta alguna info no puedo confirmar la cuenta
-      if (!tokenData || !tokenData.email || !tokenData.password) {
+      if (!confirmationTokenData || !confirmationTokenData.email || !confirmationTokenData.password) {
         return NextResponse.json(
           { error: messages.error.invalidToken },
           { status: 400 }
         );
       }
       //desestructuro la info
-      const { email, password } = tokenData;
+      const { email, password, isConfirmed } = confirmationTokenData;
 
+      //validamos que el usuario no este confirmado
+      if (isConfirmed) {
+        return NextResponse.json(
+          { error: messages.error.userAlreadyVerified },
+          { status: 400 }
+        );
+      }
+      
       // creo el usuario
       const newUser: IUserSchema = new User({
         email,
@@ -46,15 +57,21 @@ export async function POST(request: NextRequest) {
       //guardamos el usuario
       await newUser.save();
 
-      //enviamos la response
-      return NextResponse.json(
+      
+  
+      //devolvemos la respuesta
+      const response = NextResponse.json(
         {
-          user: rest,
-          isAuthorized: true,
-          message: messages.success.accountConfirmed,
+          message: messages.success.userRegistered,
         },
-        { status: 200 }
+        {
+          status: 200,
+        }
       );
+
+      
+
+      return response;
     } catch (error) {
       return NextResponse.json(
         { error: messages.error.invalidToken },

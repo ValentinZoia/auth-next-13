@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 3- creamos un objeto con el email y el id del usuario encontrado
-    const tokenData = {
+    const resetPasswordTokenData = {
       email: userFind.email,
       _id: userFind._id,
     };
@@ -61,17 +61,17 @@ export async function POST(request: NextRequest) {
     // 3- generamos un token con el objeto de datos del usuario
     // el token sera firmado con la clave secreta definida en el archivo .env
     // y expirara en un dia
-    const token = jwt.sign(
-      { data: tokenData },
+    const resetPasswordToken = jwt.sign(
+      { data: resetPasswordTokenData },
       process.env.JWT_SECRET as string,
       {
-        expiresIn: "1d",
+        expiresIn: "4h",
       }
     );
 
     // 4- generamos la URL de cambio de contraseña concatenando la URL de la app
     // con el token generado previamente y los datos del componente
-    const forgetUrl: string = `http://localhost:3000/change-password?access_token=${token}`;
+    const forgetUrl: string = `http://localhost:3000/change-password?access_token=${resetPasswordToken}`;
     const title = "Reset your password";
     const description = "Follow the button to reset the password for your user.";
     const descriptionLink="Reset password";

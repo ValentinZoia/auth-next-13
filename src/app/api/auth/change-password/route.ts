@@ -26,10 +26,10 @@ export async function POST(request: NextRequest) {
     // get() busca una cabecera y devuelve su valor
     // En este caso, estamos buscando la cabecera 'token'
     const headersList = headers();
-    const token = headersList.get("token");
+    const resetPasswordToken = headersList.get("token");
 
     //3 - verificar que haya token
-    if (!token) {
+    if (!resetPasswordToken) {
       return NextResponse.json(
         { error: messages.error.userNotVerified},
         { status: 400 }
@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
 
     try {
       //4- verificar que el token sea valido
-      const isTokenValid = jwt.verify(token, process.env.JWT_SECRET as string);
+      const isTokenValid = jwt.verify(resetPasswordToken, process.env.JWT_SECRET as string);
 
       // @ts-ignore
       const { data } = isTokenValid;
