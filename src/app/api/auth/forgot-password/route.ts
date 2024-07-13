@@ -7,11 +7,9 @@ import { messages } from "@/utils/messages";
 import { isValidEmail } from "@/utils/isValidEmail";
 import { EmailTemplate } from "@/components/EmailTemplate/email-template";
 
-
 interface BodyProps {
   email: string;
 }
-
 
 const resend = new Resend(process.env.RESEND_API_KEY as string);
 
@@ -44,12 +42,18 @@ export async function POST(request: NextRequest) {
     //Buscar el usuario en la base de datos poe email y validar que exista
     const userFind = await User.findOne({ email });
     if (!userFind) {
-      return NextResponse.json({ error: messages.error.userNotFound }, { status: 404 });
+      return NextResponse.json(
+        { error: messages.error.userNotFound },
+        { status: 404 }
+      );
     }
 
     //validar que el usuario este verificado
     if (!userFind.isConfirmed) {
-      return NextResponse.json({ error: messages.error.notConfirmedAccount }, { status: 400 });
+      return NextResponse.json(
+        { error: messages.error.notConfirmedAccount },
+        { status: 400 }
+      );
     }
 
     // 3- creamos un objeto con el email y el id del usuario encontrado
@@ -73,39 +77,44 @@ export async function POST(request: NextRequest) {
     // con el token generado previamente y los datos del componente
     const forgetUrl: string = `http://localhost:3000/change-password?access_token=${resetPasswordToken}`;
     const title = "Reset your password";
-    const description = "Follow the button to reset the password for your user.";
-    const descriptionLink="Reset password";
+    const description =
+      "Follow the button to reset the password for your user.";
+    const descriptionLink = "Reset password";
 
     // 5- enviamos el email al usuario con la URL de cambio de contraseña
-    const {data, error}= await resend.emails.send({
-        from: "onboarding@resend.dev",
-        to: [email],
-        subject: "Change your password",
-        react: EmailTemplate({ buttonUrl: forgetUrl, title, description, descriptionLink }),
-        html: `
+    const { data, error } = await resend.emails.send({
+      from: "onboarding@resend.dev",
+      to: [email],
+      subject: "Change your password",
+      react: EmailTemplate({
+        buttonUrl: forgetUrl,
+        title,
+        description,
+        descriptionLink,
+      }),
+      html: `
         <h1>Hola ${userFind.email},</h1>
         <p>Para cambiar tu contraseña, haz click en el siguiente enlace:</p>                
         <a href="${forgetUrl}">Cambia tu contraseña</a>
         `,
-      });
+    });
 
-      if (error) {
-        return NextResponse.json(
-          { error: messages.error.generic },
-          { status: 500 }
-        );
-      }
-
-
-      //6- Devolvemos respusta exitosa
-    return NextResponse.json({ message: messages.success.emailSent}, { status: 200 });
-
-
-
-  } catch (error) {
-    return NextResponse.json(
+    if (error) {
+      return NextResponse.json(
         { error: messages.error.generic },
         { status: 500 }
       );
+    }
+
+    //6- Devolvemos respusta exitosa
+    return NextResponse.json(
+      { message: messages.success.emailSent },
+      { status: 200 }
+    );
+  } catch (error) {
+    return NextResponse.json(
+      { error: messages.error.generic },
+      { status: 500 }
+    );
   }
 }

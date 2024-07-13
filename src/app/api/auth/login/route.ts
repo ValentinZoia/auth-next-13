@@ -74,12 +74,13 @@ export async function POST(request: NextRequest) {
     /*4- crear el token con el cual el usuario inicia sesion y se mantiene logeado en un futuro
         crearemos un refreshToken para que el usuario pueda renovar su sesion
     */
-    const sessionToken = jwt.sign({ data: rest }, process.env.JWT_SECRET as string, {
-      expiresIn: "1d",
-    });
-
-    
-
+    const sessionToken = jwt.sign(
+      { data: rest },
+      process.env.JWT_SECRET as string,
+      {
+        expiresIn: "1d",
+      }
+    );
 
     //5- devolvemos la respuesta
     const response = NextResponse.json(
@@ -91,20 +92,20 @@ export async function POST(request: NextRequest) {
       }
     );
 
-     //6- seteamos el cookie
-     response.cookies.set("auth_cookie", sessionToken, {
-        httpOnly: true,
-        maxAge: 60 * 60 * 24,
-        sameSite: "strict",
-        secure: process.env.NODE_ENV === "production",
-        path: "/",
+    //6- seteamos el cookie
+    response.cookies.set("auth_cookie", sessionToken, {
+      httpOnly: true,
+      maxAge: 60 * 60 * 24,
+      sameSite: "strict",
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
     });
 
     return response;
-
-
   } catch (error) {
-    return NextResponse.json({error: messages.error.generic}, {status: 500});
-    
+    return NextResponse.json(
+      { error: messages.error.generic },
+      { status: 500 }
+    );
   }
 }

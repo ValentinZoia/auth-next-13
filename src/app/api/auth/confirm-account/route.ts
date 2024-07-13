@@ -6,20 +6,18 @@ import jwt from "jsonwebtoken";
 import { messages } from "@/utils/messages";
 
 interface BodyProps {
-  otpCode: string
+  otpCode: string;
 }
-
 
 export async function POST(request: NextRequest) {
   try {
     await connectDB();
 
-    //obtenemos el body del front
+    //obtenemos el body del front que es ek codigo otp
     const body: BodyProps = await request.json();
 
     //1- destructuramos el body con el codigo otp que manda el usuario
-    const { otpCode} = body;
-
+    const { otpCode } = body;
 
     //2- Obtener el token de la cabecera de la solicitud HTTP
     const headersList = headers();
@@ -32,7 +30,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-
     try {
       //obtengo la info del token (email, password, isConfirmed, otp)
       const { data: confirmationTokenData } = jwt.verify(
@@ -41,7 +38,12 @@ export async function POST(request: NextRequest) {
       ) as any;
 
       //si falta alguna info no puedo confirmar la cuenta
-      if (!confirmationTokenData || !confirmationTokenData.email || !confirmationTokenData.password || !confirmationTokenData.otp) {
+      if (
+        !confirmationTokenData ||
+        !confirmationTokenData.email ||
+        !confirmationTokenData.password ||
+        !confirmationTokenData.otp
+      ) {
         return NextResponse.json(
           { error: messages.error.invalidToken },
           { status: 400 }
@@ -65,7 +67,7 @@ export async function POST(request: NextRequest) {
           { status: 400 }
         );
       }
-      
+
       // creo el usuario
       const newUser: IUserSchema = new User({
         email,
@@ -79,19 +81,16 @@ export async function POST(request: NextRequest) {
       //guardamos el usuario
       await newUser.save();
 
-      
-  
       //devolvemos la respuesta
       const response = NextResponse.json(
         {
+          user: rest,
           message: messages.success.userRegistered,
         },
         {
           status: 200,
         }
       );
-
-      
 
       return response;
     } catch (error) {

@@ -5,12 +5,13 @@ import { FormContext } from "..";
 
 
 interface InputProps {
-    type: 'text' | 'password' | 'email';
+    type: 'text' | 'password' | 'email' | 'number';
     name: string;
     maxLength?: number;
     placeholder?: string;
     required?: boolean;
     className?: string;
+    
 }
 
 export function Input({
@@ -19,7 +20,8 @@ export function Input({
     placeholder,
     required,
     maxLength,
-    className
+    className,
+    
 }: InputProps)  {
     const {formValues, setFormValues} = useContext(FormContext)!;
 
@@ -40,6 +42,7 @@ export function Input({
             required={required}
             className= {className + " bg-gray-700 text-gray-200 border-0 rounded-md p-2 mb-4 focus:bg-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"}
             onChange={handleChange}
+            
         />
     ); 
         

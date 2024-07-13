@@ -31,14 +31,17 @@ export async function POST(request: NextRequest) {
     //3 - verificar que haya token
     if (!resetPasswordToken) {
       return NextResponse.json(
-        { error: messages.error.userNotVerified},
+        { error: messages.error.userNotVerified },
         { status: 400 }
       );
     }
 
     try {
       //4- verificar que el token sea valido
-      const isTokenValid = jwt.verify(resetPasswordToken, process.env.JWT_SECRET as string);
+      const isTokenValid = jwt.verify(
+        resetPasswordToken,
+        process.env.JWT_SECRET as string
+      );
 
       // @ts-ignore
       const { data } = isTokenValid;

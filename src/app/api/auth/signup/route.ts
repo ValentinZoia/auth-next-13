@@ -79,12 +79,13 @@ export async function POST(request: NextRequest) {
 
     //Creamos token de confirmacion de cuenta. Expira en 30 minutos
     const confirmationToken = jwt.sign(
-      { data: { 
-        email, 
-        password: hashedPassword, 
-        isConfirmed: false,
-        otp: otp,        
-        }
+      {
+        data: {
+          email,
+          password: hashedPassword,
+          isConfirmed: false,
+          otp: otp,
+        },
       },
       process.env.JWT_SECRET as string,
       {
@@ -94,11 +95,11 @@ export async function POST(request: NextRequest) {
 
     //enviamos el email de confirmacion de cuenta a su email
     const confirmUrl: string = `http://localhost:3000/confirm-account?token=${confirmationToken}`;
-    const title = "Confirm your account";
-    const description =
-      "Thank you for signing up! To confirm your account, please follow the button below.";
-    const descriptionLink = "Confirm account";
+    const title = "Register email verification";
+    const description = `Hello ${email},
+  An email verification code request is detected by us`;
 
+    const descriptionLink = "Confirm account";
     const { data, error } = await resend.emails.send({
       from: "onboarding@resend.dev",
       to: [email],
