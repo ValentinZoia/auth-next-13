@@ -14,7 +14,7 @@ export default function ChangeaAccountPage() {
     const body = {
       otpCode: otpStr,
     };
-    console.log(body, typeof body);
+    
     await authRouter({
       endpoint: "confirm-account",
       redirectRoute: "/login",

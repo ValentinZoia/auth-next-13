@@ -91,12 +91,7 @@ export async function POST(request: NextRequest) {
         title,
         description,
         descriptionLink,
-      }),
-      html: `
-        <h1>Hola ${userFind.email},</h1>
-        <p>Para cambiar tu contraseña, haz click en el siguiente enlace:</p>                
-        <a href="${forgetUrl}">Cambia tu contraseña</a>
-        `,
+      }) as React.ReactElement
     });
 
     if (error) {

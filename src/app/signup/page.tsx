@@ -5,8 +5,8 @@ import { useAuthFetch } from "@/hooks/useAuthFetch";
 import { useState } from "react";
 
 export default function RegisterPage() {
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [email, setEmail] = useState("");
+  const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
+  const [email, setEmail] = useState<string>("");
   const { authRouter } = useAuthFetch();
 
   const signup = async (formData: any) => {
@@ -22,6 +22,13 @@ export default function RegisterPage() {
   
       setIsSubmitted(true);
     }
+  };
+
+  const resendCode = async () => {
+    await authRouter({
+      endpoint: "resend-otp",
+      body: { email },
+    });
   };
 
   //si los datos fueron validos muestro el componente
@@ -48,11 +55,17 @@ export default function RegisterPage() {
             <span className="text-m text-slate-11 font-normal mb-6">
               We just sent a verification link to {email}.
             </span>
+            <div className="flex gap-4">
+              <button onClick={resendCode} className="text-lg h-10 px-3 rounded-md gap-1 font-semibold border-2 text-white bg-gray-900">
+                Resend Code
+            </button>
             <a href="/login">
               <button className="text-lg h-10 px-3 rounded-md gap-1 font-semibold bg-white text-gray-900">
                 Go to login
               </button>
             </a>
+            </div>
+            
           </div>
         </div>
       </>

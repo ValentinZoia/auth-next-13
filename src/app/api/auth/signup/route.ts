@@ -1,12 +1,15 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, userAgent } from "next/server";
 import { isValidEmail } from "@/utils/isValidEmail";
 import User, { IUser, IUserSchema } from "@/models/User";
+import TempUser, { ITempUser } from "@/models/TempUsers";
+import { Types } from "mongoose";
 import { messages } from "@/utils/messages";
 import { connectDB } from "@/libs/mongodb";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { Resend } from "resend";
 import { EmailTemplate } from "@/components/EmailTemplate/email-template";
+import React from "react";
 
 const resend = new Resend(process.env.RESEND_API_KEY as string);
 
@@ -77,14 +80,28 @@ export async function POST(request: NextRequest) {
     //creo un codigo OTP de 6 digitos
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
+    // Genera un nuevo ObjectId
+    const tempId = new Types.ObjectId();
+
+    // Crea el usuario temporal
+    const newTempUser = new TempUser({
+      email,
+      password: hashedPassword,
+      otp: otp,
+      otpAttempts: 0,
+    });
+
+    // Asigna el _id 
+    newTempUser._id = tempId;
+
+    // Guarda el usuario temporal
+    await newTempUser.save();
+
     //Creamos token de confirmacion de cuenta. Expira en 30 minutos
     const confirmationToken = jwt.sign(
       {
         data: {
-          email,
-          password: hashedPassword,
-          isConfirmed: false,
-          otp: otp,
+          tempId: tempId.toString(),
         },
       },
       process.env.JWT_SECRET as string,
@@ -93,13 +110,15 @@ export async function POST(request: NextRequest) {
       }
     );
 
+    const { os, device } = userAgent(request);
+    const deviceInfo = `${device.type || "Unknown"} on ${os.name || "Unknown"}`;
+
     //enviamos el email de confirmacion de cuenta a su email
     const confirmUrl: string = `http://localhost:3000/confirm-account?token=${confirmationToken}`;
     const title = "Register email verification";
-    const description = `Hello ${email},
-  An email verification code request is detected by us`;
-
+    const description = `Hello ${email}. An email verification code request is detected by us`;
     const descriptionLink = "Confirm account";
+
     const { data, error } = await resend.emails.send({
       from: "onboarding@resend.dev",
       to: [email],
@@ -110,13 +129,10 @@ export async function POST(request: NextRequest) {
         description,
         descriptionLink,
         otpCode: otp,
-      }),
-      html: `
-      <h2>Confirm your account</h2>
-      <p>Introduce este código o haz clic en el botón a continuación para confirmar tu email.</p>
-      <h1>${otp}</h1>                
-      <a href="${confirmUrl}">Cambia tu contraseña</a>
-      `,
+        ip: "Unknown",
+        location: "Unknown",
+        device: deviceInfo,
+      }) as React.ReactElement,
     });
 
     //si hay un error en el envio del email

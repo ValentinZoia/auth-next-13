@@ -8,6 +8,9 @@ interface EmailTemplateProps {
   description: string;
   descriptionLink?: string;
   otpCode?: string;
+  ip: string;
+  location: string;
+  device: string;
 }
 
 export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = ({
@@ -16,22 +19,11 @@ export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = ({
   description,
   descriptionLink,
   otpCode,
+  ip,
+  location,
+  device,
 }) => {
-  // const [ipInfo, setIpInfo] = useState("");
-  // const [locationInfo, setLocationInfo] = useState("");
-
-  // useEffect(() => {
-  //   fetch("http://ip-api.com/json/")
-  //     .then((res) => res.json())
-  //     .then((data) => {
-  //       const { query: ip, country, city, region } = data;
-  //       const location = `${region} ${city}, ${country}`;
-  //       setIpInfo(`IP: ${ip}, `);
-  //       setLocationInfo(`IP Location: ${location}`);
-  //     })
-  //     .catch((err) => console.error(err));
-  // }, []);
-
+  
   return (
     <div
       style={{
@@ -39,7 +31,7 @@ export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = ({
         textAlign: "start",
         
         backgroundColor: "#1f2937",
-        width: "100%",
+        width: "668px",
         height: "100%",
       }}
     >
@@ -85,13 +77,14 @@ export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = ({
             style={{
               color: "#ebebf0",
               marginBottom: "10px",
-              height: "60px",
               fontWeight: "600",
               margin: "10px 0",
             }}
           >
-            {/* {<p style={{ paddingBottom: "10px" }}>{ipInfo || "Cargando..."}</p>}
-            <p>{locationInfo || "Cargando..."}</p> */}
+            <p>{ip|| "Cargando..."}</p>
+            <p>{location|| "Cargando..."}</p>
+            <p>{device|| "Cargando..."}</p>
+
           </div>
         </div>
         {otpCode && (

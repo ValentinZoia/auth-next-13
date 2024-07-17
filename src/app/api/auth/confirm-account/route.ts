@@ -1,5 +1,6 @@
 import { connectDB } from "@/libs/mongodb";
 import User, { IUser, IUserSchema } from "@/models/User";
+import TempUser, { ITempUser} from "@/models/TempUsers";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
@@ -22,6 +23,7 @@ export async function POST(request: NextRequest) {
     //2- Obtener el token de la cabecera de la solicitud HTTP
     const headersList = headers();
     const confirmationToken = headersList.get("token");
+    
     //si no existe token no puedo confirmar la cuenta
     if (!confirmationToken) {
       return NextResponse.json(
@@ -31,37 +33,26 @@ export async function POST(request: NextRequest) {
     }
 
     try {
-      //obtengo la info del token (email, password, isConfirmed, otp)
+      //obtengo la info del token 
       const { data: confirmationTokenData } = jwt.verify(
         confirmationToken,
         process.env.JWT_SECRET as string
       ) as any;
 
-      //si falta alguna info no puedo confirmar la cuenta
-      if (
-        !confirmationTokenData ||
-        !confirmationTokenData.email ||
-        !confirmationTokenData.password ||
-        !confirmationTokenData.otp
-      ) {
-        return NextResponse.json(
-          { error: messages.error.invalidToken },
-          { status: 400 }
-        );
-      }
-      //desestructuro la info
-      const { email, password, isConfirmed, otp } = confirmationTokenData;
+      const {tempId} = confirmationTokenData;
 
-      //validamos que el usuario no este confirmado
-      if (isConfirmed) {
+      //buscar el usuario temporal
+      const tempUser = await TempUser.findById(tempId);
+
+      if(!tempUser){
         return NextResponse.json(
-          { error: messages.error.userAlreadyVerified },
+          { error: messages.error.userNotFound },
           { status: 400 }
         );
       }
 
       //validamos que el otp sea el correcto
-      if (otp !== otpCode) {
+      if (tempUser.otp !== otpCode) {
         return NextResponse.json(
           { error: messages.error.invalidOtp },
           { status: 400 }
@@ -70,8 +61,8 @@ export async function POST(request: NextRequest) {
 
       // creo el usuario
       const newUser: IUserSchema = new User({
-        email,
-        password,
+        email: tempUser.email,
+        password: tempUser.password,
         isConfirmed: true,
       });
 
@@ -81,10 +72,13 @@ export async function POST(request: NextRequest) {
       //guardamos el usuario
       await newUser.save();
 
+      //eliminamos el usuario temporal
+      await TempUser.findByIdAndDelete(tempUser);
+
       //devolvemos la respuesta
       const response = NextResponse.json(
         {
-          user: rest,
+          user: '',
           message: messages.success.userRegistered,
         },
         {
