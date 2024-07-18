@@ -26,6 +26,7 @@ export const messages ={
         notSendEmail: "A error ocurred while sending email",
         userAlreadyVerified: "User already verified",
         invalidOtp: "Invalid Code OTP",
-        tooManyAttempts: "Too many attempts. Please try signing up again." 
+        tooManyAttempts: "Too many attempts. Please try signing up again.",
+        
     }
 }

@@ -5,6 +5,7 @@ export interface ITempUser {
   password: string;
   otp: string;
   otpAttempts: number;
+  expireAt: Date;
   createdAt?: Date;
 }
 
@@ -17,8 +18,14 @@ const TempUserSchema: Schema = new Schema({
   password: { type: String, required: true },
   otp: { type: String, required: true },
   otpAttempts: { type: Number, default: 0 },
-  createdAt: { type: Date, default: Date.now, expires: '30m' }
+  expireAt: { type: Date, required: true},
+  createdAt: { type: Date, default: Date.now,}
+},{
+  versionKey: false,
+  timestamps: true,
 });
+
+TempUserSchema.index({ expireAt: 1 }, { expireAfterSeconds: 0 });
 
 const TempUser = mongoose.models.TempUser as ITempUserModel || mongoose.model<ITempUserDocument, ITempUserModel>('TempUser', TempUserSchema);
 

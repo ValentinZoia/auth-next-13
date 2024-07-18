@@ -74,6 +74,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    //validar que no exista un usuario temporal con ese email
+    const tempUserFind = await TempUser.findOne({ email });
+    
+    //si existe lo elimino
+    if (tempUserFind) {
+      await TempUser.findByIdAndDelete(tempUserFind)
+    }
+
     // hash de la contrasenia
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -83,12 +91,16 @@ export async function POST(request: NextRequest) {
     // Genera un nuevo ObjectId
     const tempId = new Types.ObjectId();
 
+    // expira luego de 30min
+    const thirtyMinutesFromNow = new Date(Date.now() + 30 * 60 * 1000);
+
     // Crea el usuario temporal
     const newTempUser = new TempUser({
       email,
       password: hashedPassword,
       otp: otp,
       otpAttempts: 0,
+      expireAt: thirtyMinutesFromNow,
     });
 
     // Asigna el _id 

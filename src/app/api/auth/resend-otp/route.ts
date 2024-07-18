@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
     //enviamos el email de confirmacion de cuenta a su email
     const confirmUrl: string = `http://localhost:3000/confirm-account?token=${confirmationToken}`;
     const title = "Register email verification";
-    const description = `Hello ${email}. An email verification code request is detected by us`;
+    const description = `Hello ${email}. An email verification code request is detected by us.`;
     const descriptionLink = "Confirm account";
 
     const { data, error } = await resend.emails.send({
