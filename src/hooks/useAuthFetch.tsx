@@ -54,7 +54,7 @@ export const useAuthFetch = () => {
       }
 
       // Devolver un valor de éxito
-      return { success: true };
+      return { success: true, data };
 
 
     } catch (error: any) {

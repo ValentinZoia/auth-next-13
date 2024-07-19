@@ -78,11 +78,22 @@ export async function POST(request: NextRequest) {
       { data: rest },
       process.env.JWT_SECRET as string,
       {
-        expiresIn: "1d",
+        expiresIn: "6h",
       }
     );
 
-    //5- devolvemos la respuesta
+    // 5 - Crear el Refresh Token
+    const refreshToken = jwt.sign(
+      { data: rest },
+      process.env.JWT_REFRESH_SECRET as string,
+      {
+        expiresIn: "15d",
+      }
+    );
+
+
+
+    //- devolvemos la respuesta
     const response = NextResponse.json(
       {
         message: messages.success.userLogged,
@@ -92,14 +103,24 @@ export async function POST(request: NextRequest) {
       }
     );
 
-    //6- seteamos el cookie
-    response.cookies.set("auth_cookie", sessionToken, {
+    //- seteamos el cookie
+    response.cookies.set("session_token", sessionToken, {
       httpOnly: true,
-      maxAge: 60 * 60 * 24,
+      maxAge: 6 * 60 * 60, // 6 horas
       sameSite: "strict",
       secure: process.env.NODE_ENV === "production",
       path: "/",
     });
+
+    response.cookies.set("refresh_token", refreshToken, {
+      httpOnly: true,
+      maxAge: 15 * 24 * 60 * 60, // 15 dias
+      sameSite: "strict",
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+    });
+
+    
 
     return response;
   } catch (error) {

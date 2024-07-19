@@ -5,19 +5,23 @@ import jwt from "jsonwebtoken";
 import { connectDB } from "@/libs/mongodb";
 import User from "@/models/User";
 
-export async function GET(request: Request) {
+export async function POST(req: Request) {
   try {
     await connectDB();
-    const headerList = headers();
-    const token = headerList.get("token");
+    const body = await req.json();
+    const { refreshToken } = body;
+   
+
     //valido que haya token
-    if (!token) {
-      return NextResponse.json({ error: messages.error.userNotVerified });
+    if (!refreshToken) {
+      return NextResponse.json({ isAuthorized: false, error: messages.error.userNotVerified });
     }
+
+
 
     try {
       //verificar que el token sea valido
-      const isTokenValid = jwt.verify(token, process.env.JWT_SECRET as string);
+      const isTokenValid = jwt.verify(refreshToken, process.env.JWT_SECRET as string);
 
       // @ts-ignore
       const { data } = isTokenValid;
@@ -33,9 +37,19 @@ export async function GET(request: Request) {
         );
       }
 
+      const { password: userPass, ...rest } = userFind._doc;
+
+      const newSessionToken = jwt.sign(
+        { data: rest },
+        process.env.JWT_SECRET as string,
+        {
+          expiresIn: "6h",
+        }
+      );
+
       //Enviamos la reponse
       return NextResponse.json(
-        { isAuthorized: true, message: messages.success.userVerified },
+        { sessionToken: newSessionToken, isAuthorized: true, message: messages.success.userVerified },
         { status: 200 }
       );
     } catch (error) {
