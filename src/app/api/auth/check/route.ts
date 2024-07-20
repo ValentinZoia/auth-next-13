@@ -1,35 +1,32 @@
 import { messages } from "@/utils/messages";
-import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 import { connectDB } from "@/libs/mongodb";
 import User from "@/models/User";
 
-export async function POST(req: Request) {
+export async function POST(request: Request) {
   try {
     await connectDB();
-    const body = await req.json();
-    const { refreshToken } = body;
-   
+    //recibimos el refresh token desde el middleware
+    const { refreshToken } = await request.json();
 
-    //valido que haya token
+    //verificamos que el refresh token exista
     if (!refreshToken) {
-      return NextResponse.json({ isAuthorized: false, error: messages.error.userNotVerified });
+      return NextResponse.json(
+        { error: messages.error.userNotVerified },
+        { status: 400 }
+      );
     }
 
-
-
     try {
-      //verificar que el token sea valido
-      const isTokenValid = jwt.verify(refreshToken, process.env.JWT_SECRET as string);
+      const isTokenValid = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET as string);
 
       // @ts-ignore
       const { data } = isTokenValid;
 
-      //buscar el usuario en la base de datos por id. id guardado en el token
+      // Buscar el usuario en la base de datos por su ID
       const userFind = await User.findById(data._id);
 
-      //validar que el usuario exista
       if (!userFind) {
         return NextResponse.json(
           { error: messages.error.userNotFound },
@@ -37,30 +34,31 @@ export async function POST(req: Request) {
         );
       }
 
-      const { password: userPass, ...rest } = userFind._doc;
-
-      const newSessionToken = jwt.sign(
-        { data: rest },
+      // Generar un nuevo sessionToken
+      const sessionToken = jwt.sign(
+        { data: { _id: userFind._id, email: userFind.email } },
         process.env.JWT_SECRET as string,
-        {
-          expiresIn: "6h",
-        }
+        { expiresIn: "6h" }
       );
 
-      //Enviamos la reponse
+      // Retornar la respuesta con el nuevo sessionToken y el estado de éxito
       return NextResponse.json(
-        { sessionToken: newSessionToken, isAuthorized: true, message: messages.success.userVerified },
+        {
+          isAuthorized: true,
+          message: messages.success.userVerified,
+          sessionToken
+        },
         { status: 200 }
       );
     } catch (error) {
       return NextResponse.json(
-        { isAuthorized: false, error: messages.error.invalidToken },
-        { status: 500 }
+        { error: messages.error.invalidToken },
+        { status: 401 }
       );
     }
   } catch (error) {
     return NextResponse.json(
-      { isAuthorized: false, error: messages.error.generic },
+      { error: messages.error.generic },
       { status: 500 }
     );
   }

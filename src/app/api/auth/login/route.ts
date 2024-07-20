@@ -103,8 +103,8 @@ export async function POST(request: NextRequest) {
       }
     );
 
-    //- seteamos el cookie
-    response.cookies.set("session_token", sessionToken, {
+    //- seteamos el cookie con el sessionToken
+    response.cookies.set("sessionToken_cookie", sessionToken, {
       httpOnly: true,
       maxAge: 6 * 60 * 60, // 6 horas
       sameSite: "strict",
@@ -112,7 +112,8 @@ export async function POST(request: NextRequest) {
       path: "/",
     });
 
-    response.cookies.set("refresh_token", refreshToken, {
+    //- seteamos el cookie con el refreshToken
+    response.cookies.set("refreshToken_cookie", refreshToken, {
       httpOnly: true,
       maxAge: 15 * 24 * 60 * 60, // 15 dias
       sameSite: "strict",

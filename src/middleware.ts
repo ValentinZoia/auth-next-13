@@ -1,8 +1,6 @@
-import type { NextRequest } from 'next/server'
-import { NextResponse } from 'next/server'
-import jwt from "jsonwebtoken";
-
-
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+import jwt from 'jsonwebtoken';
 
 async function fetchWithAuth(endpoint: string, body: string) {
   const response = await fetch(`http://localhost:3000/api/auth/${endpoint}`, {
@@ -20,12 +18,12 @@ async function handleTokenRefresh(refreshToken: string) {
     const response = await fetchWithAuth('check', JSON.stringify({ refreshToken }));
     if (response.isAuthorized) {
       const res = NextResponse.next();
-      res.cookies.set('session_token', response.sessionToken, {
+      res.cookies.set('sessionToken_cookie', response.sessionToken, {
         httpOnly: true,
         maxAge: 6 * 60 * 60, // 6 horas
-        sameSite: "strict",
-        secure: process.env.NODE_ENV === "production",
-        path: "/",
+        sameSite: 'strict',
+        secure: process.env.NODE_ENV === 'production',
+        path: '/',
       });
       return res;
     }
@@ -37,9 +35,11 @@ async function handleTokenRefresh(refreshToken: string) {
 
 export async function middleware(request: NextRequest) {
   try {
-    const sessionToken = request.cookies.get('session_token');
-    const refreshToken = request.cookies.get('refresh_token');
+    //obtenemos los token de las cookies
+    const sessionToken = request.cookies.get('sessionToken_cookie');
+    const refreshToken = request.cookies.get('refreshToken_cookie');
 
+    //si no hay sessionToken es probable que haya expirado, por lo tanto creo otro
     if (!sessionToken) {
       if (refreshToken) {
         const res = await handleTokenRefresh(refreshToken.value);
@@ -65,5 +65,31 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: '/home'
-}
+  matcher: '/home',
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
