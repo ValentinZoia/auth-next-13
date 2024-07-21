@@ -39,19 +39,28 @@ export async function middleware(request: NextRequest) {
     const sessionToken = request.cookies.get('sessionToken_cookie');
     const refreshToken = request.cookies.get('refreshToken_cookie');
 
-    //si no hay sessionToken es probable que haya expirado, por lo tanto creo otro
+    //si no hay sessionToken en la cookie es probable que haya expirado, por lo tanto creo otro
     if (!sessionToken) {
       if (refreshToken) {
         const res = await handleTokenRefresh(refreshToken.value);
         if (res) return res;
       }
+
+
+      //si no hay refreshToken te mando al login
       return NextResponse.redirect(new URL('/login', request.url));
     }
 
+    //si hay sessionToken continuamos
     try {
+
+      //verificamos que el token sea valido
       jwt.verify(sessionToken.value, process.env.JWT_SECRET as string);
       return NextResponse.next();
+
     } catch (error) {
+      
+      //si el token es invalido, creo otro. Solo si hay refreshToken
       if (refreshToken) {
         const res = await handleTokenRefresh(refreshToken.value);
         if (res) return res;
@@ -67,29 +76,3 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: '/home',
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

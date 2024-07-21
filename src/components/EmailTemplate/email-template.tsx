@@ -8,9 +8,9 @@ interface EmailTemplateProps {
   description: string;
   descriptionLink?: string;
   otpCode?: string;
-  ip: string;
-  location: string;
-  device: string;
+  ip?: string;
+  location?: string;
+  device?: string;
 }
 
 export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = ({

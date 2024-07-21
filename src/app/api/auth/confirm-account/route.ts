@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
   try {
     await connectDB();
 
-    //obtenemos el body del front que es ek codigo otp
+    //obtenemos el body del front que es el codigo otp
     const body: BodyProps = await request.json();
 
     //1- destructuramos el body con el codigo otp que manda el usuario
