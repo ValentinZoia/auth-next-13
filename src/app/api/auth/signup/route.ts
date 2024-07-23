@@ -11,7 +11,7 @@ import { Resend } from "resend";
 import { EmailTemplate } from "@/components/EmailTemplate/email-template";
 import React from "react";
 
-const resend = new Resend(process.env.RESEND_API_KEY as string);
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 //el nombre de la funcion debe ser como el metodo de las peticiones
 export async function POST(request: NextRequest) {

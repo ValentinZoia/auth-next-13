@@ -5,7 +5,7 @@ import { messages } from "@/utils/messages";
 import { NextRequest, NextResponse, userAgent } from "next/server";
 import jwt from "jsonwebtoken";
 import { Resend } from "resend";
-const resend = new Resend(process.env.RESEND_API_KEY as string);
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(request: NextRequest) {
   try {
