@@ -573,7 +573,7 @@ Contraseña mayor a 8 dígitos, con un número, pero diferente al `confirmPasswo
 
 **Escenario N°6**
 
-Un usuario ya existe con ese email.
+Datos validos, usuario cargado en tempUser y email de confirmacion enviado
 
 ![Untitled](readme-img/Untitled%203.png)
 
