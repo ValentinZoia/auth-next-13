@@ -575,7 +575,7 @@ Contraseña mayor a 8 dígitos, con un número, pero diferente al `confirmPasswo
 
 Un usuario ya existe con ese email.
 
-![Untitled](Autentificacio%CC%81n%20React%20ff3f833513954e7bbc78edc329c0e40a/Untitled%203.png)
+![Untitled](readme-img/Untitled%203.png)
 
 ### Confirm-Account
 
