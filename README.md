@@ -541,7 +541,7 @@ Si tienen postman recomiendo utilizarlo para comprobar el funcionamiento. Yo ten
 
 Solo completa un solo campo, en este caso email:
 
-![Captura de pantalla 2024-07-09 173255.png](Autentificacio%CC%81n%20React%20ff3f833513954e7bbc78edc329c0e40a/Captura_de_pantalla_2024-07-09_173255.png)
+![Captura de pantalla 2024-07-09 173255.png](readme-img/Captura_de_pantalla_2024-07-09_173255.png)
 
 Primero recordemos setear en POST, colocar la url, Body en formato json.
 
@@ -551,25 +551,25 @@ Como vemos en la foto, yo mando un json con solo el email, y me devuelve un mens
 
 Email invalidó no contiene @.
 
-![Untitled](Autentificacio%CC%81n%20React%20ff3f833513954e7bbc78edc329c0e40a/Untitled.png)
+![Untitled](readme-img/Untitled.png)
 
 **Escenario N°3**
 
 Contraseña menor a 8 digitos.
 
-![Untitled](Autentificacio%CC%81n%20React%20ff3f833513954e7bbc78edc329c0e40a/Untitled%201.png)
+![Untitled](readme-img/Untitled%201.png)
 
 **Escenario N°4**
 
 Contraseña mayor a 8 dígitos pero sin un número.
 
-![Untitled](Autentificacio%CC%81n%20React%20ff3f833513954e7bbc78edc329c0e40a/835eaa8f-4ecf-4fab-835d-d09a4e65c43c.png)
+![Untitled](readme-img/835eaa8f-4ecf-4fab-835d-d09a4e65c43c.png)
 
 **Escenario N°5**
 
 Contraseña mayor a 8 dígitos, con un número, pero diferente al `confirmPassword`.
 
-![Untitled](Autentificacio%CC%81n%20React%20ff3f833513954e7bbc78edc329c0e40a/Untitled%202.png)
+![Untitled](readme-img/Untitled%202.png)
 
 **Escenario N°6**
 
@@ -710,7 +710,7 @@ export async function POST(request: NextRequest) {
 
 Ahora si entramos en nuestro MongoDB Compass podremos ver al usuario cargado dentro de la colección **users** y db **auth-next-13**
 
-![Untitled](Autentificacio%CC%81n%20React%20ff3f833513954e7bbc78edc329c0e40a/Untitled%204.png)
+![Untitled](readme-img/Untitled%204.png)
 
 ### Resend-otp
 
@@ -1011,19 +1011,19 @@ Los escenarios de validar que los campos no esten vacios y que el email sea vál
 
 Validar que el usuario exista - Email Incorrecto / No encontrado
 
-![Untitled](Autentificacio%CC%81n%20React%20ff3f833513954e7bbc78edc329c0e40a/Untitled%205.png)
+![Untitled](readme-img/Untitled%205.png)
 
 **Escenario N°2**
 
 Validar que la contraseña sea correcta - Email Correcto / Contraseña Incorrecta
 
-![Untitled](Autentificacio%CC%81n%20React%20ff3f833513954e7bbc78edc329c0e40a/Untitled%206.png)
+![Untitled](readme-img/Untitled%206.png)
 
 **Escenario N°3**
 
 Todo Ok - Email Correcto / Contraseña Correcta
 
-![Untitled](Autentificacio%CC%81n%20React%20ff3f833513954e7bbc78edc329c0e40a/Untitled%207.png)
+![Untitled](readme-img/Untitled%207.png)
 
 ### Forgot-Password
 
@@ -1180,11 +1180,11 @@ Los escenarios de validar que los campos no esten vacios, que el email sea váli
 
 Todo Ok- Email Correcto → Enviar email con info sobre recuperar la contraseña.
 
-![Untitled](Autentificacio%CC%81n%20React%20ff3f833513954e7bbc78edc329c0e40a/Untitled%208.png)
+![Untitled](readme-img/Untitled%208.png)
 
 Ahora yo en modo de ejemplo puse que el email sea enviado a mi. Esto fue lo que me llegó:
 
-![Untitled](Autentificacio%CC%81n%20React%20ff3f833513954e7bbc78edc329c0e40a/Untitled%209.png)
+![Untitled](readme-img/Untitled%209.png)
 
 ### Change Password
 
@@ -1368,27 +1368,27 @@ Los escenarios de validar que los campos no esten vacios, que la contraseña ten
 
 No existe token.
 
-![Untitled](Autentificacio%CC%81n%20React%20ff3f833513954e7bbc78edc329c0e40a/Untitled%2010.png)
+![Untitled](readme-img/Untitled%2010.png)
 
-![Captura de pantalla 2024-07-10 114839.png](Autentificacio%CC%81n%20React%20ff3f833513954e7bbc78edc329c0e40a/Captura_de_pantalla_2024-07-10_114839.png)
+![Captura de pantalla 2024-07-10 114839.png](readme-img/Captura_de_pantalla_2024-07-10_114839.png)
 
 **Escenario N°2**
 
 Token Invalido. Para simularlo, en la ventana Headers→ input: token copiamos el token de la url de la página la cual nos manda el correo para cambiar la contraseña. Al ser invalido le borramos un digito.
 
-![Untitled](Autentificacio%CC%81n%20React%20ff3f833513954e7bbc78edc329c0e40a/Untitled%2011.png)
+![Untitled](readme-img/Untitled%2011.png)
 
 **Escenario N°3**
 
 Nueva contraseña igual a la vieja la cual queremos cambiar - Token Válido
 
-![Untitled](Autentificacio%CC%81n%20React%20ff3f833513954e7bbc78edc329c0e40a/Untitled%2012.png)
+![Untitled](readme-img/Untitled%2012.png)
 
 **Escenario N°4**
 
 Todo OK- Contraseña diferente a la anterior- Token Válido
 
-![Untitled](Autentificacio%CC%81n%20React%20ff3f833513954e7bbc78edc329c0e40a/Untitled%2013.png)
+![Untitled](readme-img/Untitled%2013.png)
 
 Y así ya tenemos los 4 endpoints principales. Register, Login, Forget-password y Change-password
 
