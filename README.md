@@ -77,7 +77,7 @@ src
 └── 
 ```
 
-Dentro de auth van los endpoints de la app. Ejemplo al tener la carpeta register: [http://localhost:3000/api/auth/register](http://localhost:3000/api/auth/register).
+Dentro de auth van los endpoints de la app. 
 
 ## Crear endpoints
 
