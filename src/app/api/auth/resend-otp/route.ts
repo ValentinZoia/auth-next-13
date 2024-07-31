@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
     const deviceInfo = `${device.type || "Unknown"} on ${os.name || "Unknown"}`;
 
     //enviamos el email de confirmacion de cuenta a su email
-    const confirmUrl: string = `http://localhost:3000/confirm-account?token=${confirmationToken}`;
+    const confirmUrl: string = `${process.env.NEXT_PUBLIC_API_URL}/confirm-account?token=${confirmationToken}`;
     const title = "Register email verification";
     const description = `Hello ${email}. An email verification code request is detected by us.`;
     const descriptionLink = "Confirm account";

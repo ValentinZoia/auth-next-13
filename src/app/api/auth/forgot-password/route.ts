@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
 
     // 4- generamos la URL de cambio de contraseña concatenando la URL de la app
     // con el token generado previamente y los datos del componente
-    const forgetUrl: string = `http://localhost:3000/change-password?access_token=${resetPasswordToken}`;
+    const forgetUrl: string = `${process.env.NEXT_PUBLIC_API_URL}/change-password?access_token=${resetPasswordToken}`;
     const title = "Reset your password";
     const description =
       "Follow the button to reset the password for your user.";
