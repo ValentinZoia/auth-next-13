@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const MONGO_URI = "mongodb://127.0.0.1/auth-next-13";
+const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1/auth-next-13";
 
 export const connectDB = async () => {
     try{

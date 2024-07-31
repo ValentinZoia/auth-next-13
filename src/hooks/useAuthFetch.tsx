@@ -1,3 +1,4 @@
+"use client";
 import NotificationContext from "@/context/NotificationContext";
 import { useRouter } from "next/navigation";
 import { useContext } from "react";
@@ -21,7 +22,7 @@ export const useAuthFetch = () => {
   }: AuthFetchProps) => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/${endpoint}`,
+        `api/auth/${endpoint}`,
         {
           method: "POST",
           body: JSON.stringify(body),
